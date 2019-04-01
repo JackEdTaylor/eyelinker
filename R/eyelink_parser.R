@@ -65,11 +65,19 @@ read.asc <- function(fname)
         str_detect(inp_relevant[i], "^MSG.*TRIALID") & !str_detect(inp_relevant[i+1], "^MSG.*TRIAL_RESULT")
       })]
       inp <- inp[!inp %in% dodgy_trialids]  # exclude these bad trials
-      cat(sprintf(" - ignored %i trials that started but didn't end properly\n", length(dodgy_trialids)))
+      cat(sprintf(" - %i unending trials ignored\n", length(dodgy_trialids)))
     }
     
     bl.start <- str_detect(inp,"^START")%>%which
+    cat(sprintf(" - %i STARTs detected\n", length(bl.trialid)))
     bl.end <- str_detect(inp,"^END")%>%which
+    cat(sprintf(" - %i ENDs detected\n", length(bl.trialid)))
+    
+    if (!all(c(length(bl.start), length(bl.end), length(bl.trialid)-length(dodgy_trialids)) == length(bl.trialres))) {
+      warn_message <- sprintf("inconsistent trial counts in %s", fname)
+      cat(sprintf(" - %s\n", warn_message))
+      warning(warn_message)
+    }
     
     nBlocks <- length(bl.start)
     blocks <- llply(1:nBlocks,function(indB) process.block(inp[bl.start[indB]:bl.end[indB]],info))
