@@ -67,7 +67,7 @@ read.asc <- function(fname)
       inp <- inp[!inp %in% dodgy_trialids]  # exclude these bad trials
       bl.start <- str_detect(inp,"^MSG.*TRIALID")%>%which
       bl.end <- str_detect(inp,"^MSG.*TRIAL_RESULT")%>%which
-      cat(sprintf(" - ignored %i trials that started but didn't end properly\n", length(dodgy_trialids)))
+      cat(sprintf(" - %i unending trials ignored\n", length(dodgy_trialids)))
     }
     
     nBlocks <- length(bl.start)
