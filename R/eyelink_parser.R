@@ -58,8 +58,9 @@ read.asc <- function(fname)
     cat(sprintf(" - %i TRIAL_RESULTs detected\n", length(bl.trialres)))
     
     # exclude trials that start but never end
-    inp_relevant <- inp[c(bl.trialid, bl.trialres)] %>% sort()  # get start and end MSGs and sort by time
+    dodgy_trialids <- c()  # ensure dodgy_trialids exists
     if (length(bl.trialid) > length(bl.trialres)) {
+      inp_relevant <- inp[c(bl.trialid, bl.trialres)] %>% sort()  # get start and end MSGs and sort by time
       dodgy_trialids <- inp_relevant[sapply(1:length(inp_relevant), function(i) {
         # extract trials which started and never ended
         str_detect(inp_relevant[i], "^MSG.*TRIALID") & !str_detect(inp_relevant[i+1], "^MSG.*TRIAL_RESULT")
