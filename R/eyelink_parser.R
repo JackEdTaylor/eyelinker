@@ -49,7 +49,7 @@ read.asc <- function(fname)
     #"Header" isn't strict, it's whatever comes before the first "START" line
     init <- str_detect(inp,"^START") %>% which %>% min
     header <- inp[1:(init-1)]
-    inp <- inp[init:length(inp)]
+    #inp <- inp[init:length(inp)]
 
     
     #Find blocks
