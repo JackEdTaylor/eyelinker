@@ -57,6 +57,25 @@ read.asc <- function(fname)
     cat(sprintf(" - %i TRIALIDs detected\n", length(bl.start)))
     bl.end <- str_detect(inp,"^MSG.*TRIAL_RESULT")%>%which
     cat(sprintf(" - %i TRIAL_RESULTs detected\n", length(bl.end)))
+    
+    # exclude trials that start but never end
+    if (length(bl.start) > length(bl.end)) {
+      dodgy_idxs <- c()
+      for (indB in 1:length(bl.start)) {
+        if (!is.na(bl.end[indB])) {
+          this_block <- inp[bl.start[indB]:bl.end[indB]]
+          trial_starts <- str_detect(this_block, "^MSG.*TRIALID") %>% which
+          if (length(trial_starts) > 1) {
+            dodgy_idxs <- c(dodgy_idxs, indB)
+          }
+        }
+      }
+      inp <- inp[inp != inp[dodgy_idxs]]
+      bl.start <- str_detect(inp,"^MSG.*TRIALID")%>%which
+      bl.end <- str_detect(inp,"^MSG.*TRIAL_RESULT")%>%which
+      cat(sprintf(" - ignored %i trials that started but didn't end properly\n", length(dodgy_idxs)))
+    }
+    
     nBlocks <- length(bl.start)
     blocks <- llply(1:nBlocks,function(indB) process.block(inp[bl.start[indB]-1:bl.end[indB]+1],info))
     ## collect <- function(vname)
