@@ -59,13 +59,14 @@ read.asc <- function(fname)
     
     # exclude trials that start but never end
     dodgy_trialids <- c()  # ensure dodgy_trialids exists
+    inp_relevant <- inp[c(bl.trialid, bl.trialres)] %>% sort()  # get start and end MSGs and sort by time
     if (length(bl.trialid) > length(bl.trialres)) {
-      inp_relevant <- inp[c(bl.trialid, bl.trialres)] %>% sort()  # get start and end MSGs and sort by time
       dodgy_trialids <- inp_relevant[sapply(1:length(inp_relevant), function(i) {
         # extract trials which started and never ended
         str_detect(inp_relevant[i], "^MSG.*TRIALID") & !str_detect(inp_relevant[i+1], "^MSG.*TRIAL_RESULT")
       })]
       inp <- inp[!inp %in% dodgy_trialids]  # exclude these bad trials
+      cat(sprintf(" - %i unending trials ignored\n", length(dodgy_trialids)))
     }
     
     #bl.start <- str_detect(inp,"^START")%>%which
@@ -75,7 +76,7 @@ read.asc <- function(fname)
     bl.start <- bl.trialid
     bl.end <- bl.trialres
     
-    if (!all(c(length(bl.start), length(bl.end), length(bl.trialid)-length(dodgy_trialids)) == length(bl.trialres))) {
+    if (!all(c(length(bl.start), length(bl.end)) == length(bl.trialres))) {
       warn_message <- sprintf("inconsistent trial counts in %s", fname)
       cat(sprintf(" - %s\n", warn_message))
       warning(warn_message)
