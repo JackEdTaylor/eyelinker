@@ -58,7 +58,7 @@ read.asc <- function(fname)
     bl.end <- str_detect(inp,"^MSG.*TRIAL_RESULT")%>%which
     cat(sprintf(" - %i TRIAL_RESULTs detected\n", length(bl.end)))
     nBlocks <- length(bl.start)
-    blocks <- llply(1:nBlocks,function(indB) process.block(inp[bl.start-1[indB]:bl.end+1[indB]],info))
+    blocks <- llply(1:nBlocks,function(indB) process.block(inp[bl.start[indB]-1:bl.end[indB]+1],info))
     ## collect <- function(vname)
     ##     {
     ##         valid <- Filter(function(ind) !is.null(blocks[[ind]][[vname]]),1:length(blocks))
