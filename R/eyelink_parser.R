@@ -72,7 +72,7 @@ read.asc <- function(fname)
     #cat(sprintf(" - %i STARTs detected\n", length(bl.trialid)))
     #bl.end <- str_detect(inp,"^END")%>%which
     #cat(sprintf(" - %i ENDs detected\n", length(bl.trialid)))
-    bl.start <- bl.trialids
+    bl.start <- bl.trialid
     bl.end <- bl.trialres
     
     if (!all(c(length(bl.start), length(bl.end), length(bl.trialid)-length(dodgy_trialids)) == length(bl.trialres))) {
