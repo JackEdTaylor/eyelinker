@@ -50,7 +50,6 @@ read.asc <- function(fname)
     init <- str_detect(inp,"^START") %>% which %>% min
     header <- inp[1:(init-1)]
     #inp <- inp[init:length(inp)]
-
     
     #Find blocks
     bl.start <- str_detect(inp,"^MSG.*TRIALID")%>%which
@@ -59,21 +58,16 @@ read.asc <- function(fname)
     cat(sprintf(" - %i TRIAL_RESULTs detected\n", length(bl.end)))
     
     # exclude trials that start but never end
+    inp_relevant <- inp[c(bl.start, bl.end)] %>% sort()  # get start and end MSGs and sort by time
     if (length(bl.start) > length(bl.end)) {
-      dodgy_idxs <- c()
-      for (indB in 1:length(bl.start)) {
-        if (!is.na(bl.end[indB])) {
-          this_block <- inp[bl.start[indB]:bl.end[indB]]
-          trial_starts <- str_detect(this_block, "^MSG.*TRIALID") %>% which
-          if (length(trial_starts) > 1) {
-            dodgy_idxs <- c(dodgy_idxs, indB)
-          }
-        }
-      }
-      inp <- inp[inp != inp[dodgy_idxs]]
+      dodgy_trialids <- inp_relevant[sapply(1:length(inp_relevant), function(i) {
+        # extract trials which started and never ended
+        str_detect(inp_relevant[i], "^MSG.*TRIALID") & !str_detect(inp_relevant[i+1], "^MSG.*TRIAL_RESULT")
+      })]
+      inp <- inp[!inp %in% dodgy_trialids]  # exclude these bad trials
       bl.start <- str_detect(inp,"^MSG.*TRIALID")%>%which
       bl.end <- str_detect(inp,"^MSG.*TRIAL_RESULT")%>%which
-      cat(sprintf(" - ignored %i trials that started but didn't end properly\n", length(dodgy_idxs)))
+      cat(sprintf(" - ignored %i trials that started but didn't end properly\n", length(dodgy_trialids)))
     }
     
     nBlocks <- length(bl.start)
