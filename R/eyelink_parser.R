@@ -97,6 +97,7 @@ read.asc <- function(fname)
     out <- map(vars,collect) %>% setNames(vars)
 
     out$info <- info
+    out$trialIDs <- str_replace(inp[bl.start], "^MSG.*TRIALID ", "")
     out
 }
 
