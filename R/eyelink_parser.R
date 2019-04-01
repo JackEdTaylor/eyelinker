@@ -41,7 +41,7 @@ read.asc <- function(fname)
     
     #Just to spite us, there's an inconsistency in how HTARG info is encoded (missing tab)
     #We fix it if necessary
-    if (has.raw && info$htarg)
+    if (any(has.raw) && info$htarg)
     {
         inp <- str_replace_all(inp,fixed("............."),fixed("\t............."))
     }
@@ -238,7 +238,7 @@ process.block <- function(blk,info)
 {
     hd <- process.block.header(blk)
     blk <- hd$the.rest
-    if (is.na(info)) #no raw data
+    if (all(is.na(info))) #no raw data
     {
         raw <- NULL
         which.raw <- rep(FALSE,length(blk))
