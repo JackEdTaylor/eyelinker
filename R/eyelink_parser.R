@@ -92,7 +92,7 @@ read.asc <- function(fname)
             out
         }
     }
-    vars <- c("raw","msg","sacc","fix","blinks","info")
+    vars <- c("raw","msg","sacc","fix","blinks","info","trialIDs")
     #Collect all the data across blocks
     out <- map(vars,collect) %>% setNames(vars)
 
