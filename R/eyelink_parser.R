@@ -54,6 +54,7 @@ read.asc <- function(fname)
     
     #Find blocks
     bl.start <- str_detect(inp,"^MSG*TRIALID")%>%which
+    cat(sprintf(" - %i blocks detected", length(bl.start))
     bl.end <- str_detect(inp,"^END")%>%which
     nBlocks <- length(bl.start)
     blocks <- llply(1:nBlocks,function(indB) process.block(inp[bl.start[indB]:bl.end[indB]],info))
