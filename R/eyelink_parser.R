@@ -52,34 +52,22 @@ read.asc <- function(fname)
     #inp <- inp[init:length(inp)]
     
     #Find blocks
-    bl.trialid <- str_detect(inp,"^MSG.*TRIALID")%>%which
-    cat(sprintf(" - %i TRIALIDs detected\n", length(bl.trialid)))
-    bl.trialres <- str_detect(inp,"^MSG.*TRIAL_RESULT")%>%which
-    cat(sprintf(" - %i TRIAL_RESULTs detected\n", length(bl.trialres)))
+    bl.start <- str_detect(inp,"^MSG.*TRIALID")%>%which
+    cat(sprintf(" - %i TRIALIDs detected\n", length(bl.start)))
+    bl.end <- str_detect(inp,"^MSG.*TRIAL_RESULT")%>%which
+    cat(sprintf(" - %i TRIAL_RESULTs detected\n", length(bl.end)))
     
     # exclude trials that start but never end
-    dodgy_trialids <- c()  # ensure dodgy_trialids exists
-    inp_relevant <- inp[c(bl.trialid, bl.trialres)] %>% sort()  # get start and end MSGs and sort by time
-    if (length(bl.trialid) > length(bl.trialres)) {
+    inp_relevant <- inp[c(bl.start, bl.end)] %>% sort()  # get start and end MSGs and sort by time
+    if (length(bl.start) > length(bl.end)) {
       dodgy_trialids <- inp_relevant[sapply(1:length(inp_relevant), function(i) {
         # extract trials which started and never ended
         str_detect(inp_relevant[i], "^MSG.*TRIALID") & !str_detect(inp_relevant[i+1], "^MSG.*TRIAL_RESULT")
       })]
       inp <- inp[!inp %in% dodgy_trialids]  # exclude these bad trials
-      cat(sprintf(" - %i unending trials ignored\n", length(dodgy_trialids)))
-    }
-    
-    #bl.start <- str_detect(inp,"^START")%>%which
-    #cat(sprintf(" - %i STARTs detected\n", length(bl.trialid)))
-    #bl.end <- str_detect(inp,"^END")%>%which
-    #cat(sprintf(" - %i ENDs detected\n", length(bl.trialid)))
-    bl.start <- bl.trialid
-    bl.end <- bl.trialres
-    
-    if (!all(c(length(bl.start), length(bl.end)) == length(bl.trialres))) {
-      warn_message <- sprintf("inconsistent trial counts in %s", fname)
-      cat(sprintf(" - %s\n", warn_message))
-      warning(warn_message)
+      bl.start <- str_detect(inp,"^MSG.*TRIALID")%>%which
+      bl.end <- str_detect(inp,"^MSG.*TRIAL_RESULT")%>%which
+      cat(sprintf(" - ignored %i trials that started but didn't end properly\n", length(dodgy_trialids)))
     }
     
     nBlocks <- length(bl.start)
@@ -109,7 +97,7 @@ read.asc <- function(fname)
     out <- map(vars,collect) %>% setNames(vars)
 
     out$info <- info
-    out$trialIDs <- str_replace(inp[bl.trialid], "^MSG.*TRIALID ", "")
+    out$trialIDs <- str_replace(inp[bl.start], "^MSG.*TRIALID ", "")
     out$raw$trialID <- out$trialIDs[as.numeric(out$raw$block)]
     out$msg$trialID <- out$trialIDs[as.numeric(out$msg$block)]
     out
