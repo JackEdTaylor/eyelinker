@@ -98,6 +98,8 @@ read.asc <- function(fname)
 
     out$info <- info
     out$trialIDs <- str_replace(inp[bl.start], "^MSG.*TRIALID ", "")
+    out$raw$trialID <- out$trialIDs[out$raw$block]
+    out$msg$trialID <- out$trialIDs[out$msg$block]
     out
 }
 
