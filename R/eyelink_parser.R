@@ -71,7 +71,7 @@ read.asc <- function(fname)
     }
     
     nBlocks <- length(bl.start)
-    blocks <- llply(1:nBlocks,function(indB) process.block(inp[bl.start[indB]-1:bl.end[indB]+1],info))
+    blocks <- llply(1:nBlocks,function(indB) process.block(inp[bl.start[indB]:bl.end[indB]],info))
     ## collect <- function(vname)
     ##     {
     ##         valid <- Filter(function(ind) !is.null(blocks[[ind]][[vname]]),1:length(blocks))
