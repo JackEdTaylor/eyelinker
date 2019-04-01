@@ -52,23 +52,24 @@ read.asc <- function(fname)
     #inp <- inp[init:length(inp)]
     
     #Find blocks
-    bl.start <- str_detect(inp,"^MSG.*TRIALID")%>%which
-    cat(sprintf(" - %i TRIALIDs detected\n", length(bl.start)))
-    bl.end <- str_detect(inp,"^MSG.*TRIAL_RESULT")%>%which
-    cat(sprintf(" - %i TRIAL_RESULTs detected\n", length(bl.end)))
+    bl.trialid <- str_detect(inp,"^MSG.*TRIALID")%>%which
+    cat(sprintf(" - %i TRIALIDs detected\n", length(bl.trialid)))
+    bl.trialres <- str_detect(inp,"^MSG.*TRIAL_RESULT")%>%which
+    cat(sprintf(" - %i TRIAL_RESULTs detected\n", length(bl.trialres)))
     
     # exclude trials that start but never end
-    inp_relevant <- inp[c(bl.start, bl.end)] %>% sort()  # get start and end MSGs and sort by time
-    if (length(bl.start) > length(bl.end)) {
+    inp_relevant <- inp[c(bl.trialid, bl.trialres)] %>% sort()  # get start and end MSGs and sort by time
+    if (length(bl.trialid) > length(bl.trialres)) {
       dodgy_trialids <- inp_relevant[sapply(1:length(inp_relevant), function(i) {
         # extract trials which started and never ended
         str_detect(inp_relevant[i], "^MSG.*TRIALID") & !str_detect(inp_relevant[i+1], "^MSG.*TRIAL_RESULT")
       })]
       inp <- inp[!inp %in% dodgy_trialids]  # exclude these bad trials
-      bl.start <- str_detect(inp,"^MSG.*TRIALID")%>%which
-      bl.end <- str_detect(inp,"^MSG.*TRIAL_RESULT")%>%which
       cat(sprintf(" - ignored %i trials that started but didn't end properly\n", length(dodgy_trialids)))
     }
+    
+    bl.start <- str_detect(inp,"^START")%>%which
+    bl.end <- str_detect(inp,"^END")%>%which
     
     nBlocks <- length(bl.start)
     blocks <- llply(1:nBlocks,function(indB) process.block(inp[bl.start[indB]:bl.end[indB]],info))
@@ -97,7 +98,7 @@ read.asc <- function(fname)
     out <- map(vars,collect) %>% setNames(vars)
 
     out$info <- info
-    out$trialIDs <- str_replace(inp[bl.start], "^MSG.*TRIALID ", "")
+    out$trialIDs <- str_replace(inp[bl.trialid], "^MSG.*TRIALID ", "")
     out$raw$trialID <- out$trialIDs[as.numeric(out$raw$block)]
     out$msg$trialID <- out$trialIDs[as.numeric(out$msg$block)]
     out
