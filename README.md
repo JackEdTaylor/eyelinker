@@ -1,17 +1,3 @@
-[![CRAN Version](http://www.r-pkg.org/badges/version/eyelinker)](https://cran.rstudio.com/web/packages/eyelinker)
+Edited version of eyelinker for Carnegie Grant analysis.
 
-# Eyelinker: a package for reading Eyelink data
-
-Turns horrible Eyelink .asc files into less horrible R data structures.
-
-	install.packages("eyelinker")
-	library(eyelinker)
-	#Example file from SR research that ships with the package
-	fpath <- system.file("extdata/mono500.asc.gz",package="eyelinker")
-	dat <- read.asc(fpath)
-	plot(dat$raw$time,dat$raw$xp,xlab="Time (ms)",ylab="Eye position along x axis (pix)")
-	#For more info:
-	vignette("basics",package="eyelinker")
-	
-Author: Simon Barthelmé, CNRS, Gipsa-lab. See also: [cili](https://github.com/beOn/cili).
-
+Necessary because needed pre-samples msg events to get details on stimuli, and there were many false starts in the data. Trial indices are defined between `TRIALID XXXXXX` and `TRIAL_RESULTS XXXXXX`. Data from trials that began and never ended is dropped.
