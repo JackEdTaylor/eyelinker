@@ -150,7 +150,7 @@ process.block.header <- function(blk)
                     srate=srate,
                     filter=filter)
     }
-    list(events=events,samples=samples,the.rest=blk[-(1:endh)])
+    list(events=events,samples=samples,the.rest=blk[-(endh-1:endh)])
 }
 
 #Turn a list of strings with tab-separated field into a data.frame
