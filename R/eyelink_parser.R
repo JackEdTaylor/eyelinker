@@ -100,6 +100,9 @@ read.asc <- function(fname)
     out$trialIDs <- str_replace(inp[bl.start], "^MSG.*TRIALID ", "")
     out$raw$trialID <- out$trialIDs[as.numeric(out$raw$block)]
     out$msg$trialID <- out$trialIDs[as.numeric(out$msg$block)]
+    out$sacc$trialID <- out$trialIDs[as.numeric(out$sacc$block)]
+    out$fix$trialID <- out$trialIDs[as.numeric(out$fix$block)]
+    out$blinks$trialID <- out$trialIDs[as.numeric(out$blinks$block)]
     out
 }
 
